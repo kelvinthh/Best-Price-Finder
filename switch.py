@@ -1,5 +1,3 @@
-from pickletools import TAKEN_FROM_ARGUMENT1
-from tkinter import E
 from bs4 import BeautifulSoup
 import requests
 
@@ -14,18 +12,18 @@ def findSwitch(pageNo):
             delTag = item.find("del")
             spanTags = delTag.find_all("span", {"class": "text-price-number"})
             title = item.img["title"]
-
-            if "Switch" in title and "LED" in title:
-                print("--------------------------------")
-                print(title)
-            else:
-                continue
+            price = 0
 
             for spanTag in spanTags:
-                print("Price: $" + spanTag.string)
+                    price = int(spanTag.string.replace(",", ""))
 
-            print("Page " + str(pageNo))
-                
+
+            if "Switch" in title and "OLED" in title and price > 1000:
+                print("--------------------------------")
+                print(title)
+                print("Price: $" + spanTag.string)
+                print("Page " + str(pageNo))
+        
     except Exception as e: 
         pass
 
