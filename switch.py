@@ -33,6 +33,11 @@ for i in tqdm(range(1,maxPageNo+1)):
             # spanTags = delTag.find_all("span", {"class": "text-price-number"})
             # print("JSSDADSA " + item.find_all("div", class_ = "ec-product-price"))
             priceDiv = item.find("div", {"class": "ec-product-price"})
+
+            remarkLabel = priceDiv.find("span", {"class": "remark-label"})
+            if remarkLabel and "已售罄" in remarkLabel:
+                continue
+
             priceSpan = priceDiv.find("span", {"class": "text-price-number"})
         
             haha = item
@@ -59,7 +64,6 @@ for i in tqdm(range(1,maxPageNo+1)):
         pass
 
 print("============================================")
-print(f"Search finished, searched {maxPageNo} pages and found {len(results)} result(s)")
 
 # for result in results:
 #     # print(f"${str(result.get('price'))}     {result.get('title')}")
@@ -71,3 +75,5 @@ for result in sortedList:
     # print(f"${str(result.get('price'))}     {result.get('title')}")
     # print(hyperlink(result.get('link'), 'Click here!~'))
     print(hyperlink(result.get('link'), f"HK${str(result.get('price'))}   {result.get('title')}"))
+
+print(f"✅  Search finished, searched {maxPageNo} pages and found {len(results)} result(s)")
