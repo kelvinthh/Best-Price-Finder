@@ -29,8 +29,13 @@ for i in tqdm(range(1,maxPageNo+1)):
 
     try:
         for item in items:
-            delTag = item.find("del")
-            spanTags = delTag.find_all("span", {"class": "text-price-number"})
+            # delTag = item.find("del")
+            # spanTags = delTag.find_all("span", {"class": "text-price-number"})
+            # print("JSSDADSA " + item.find_all("div", class_ = "ec-product-price"))
+            priceDiv = item.find("div", {"class": "ec-product-price"})
+            priceSpan = priceDiv.find("span", {"class": "text-price-number"})
+        
+            haha = item
             title = item.img["title"]
             price = 0
             a_href = item.find("a")["href"]
@@ -39,8 +44,7 @@ for i in tqdm(range(1,maxPageNo+1)):
             else:
                 link = "https://price.com.hk/"+item.find("a")["href"]
 
-            for spanTag in spanTags:
-                    price = int(spanTag.string.replace(",", ""))
+            price = int(priceSpan.string.replace(",", ""))
 
 
             if searchItem in title and price > int(priceFilter):
@@ -57,8 +61,13 @@ for i in tqdm(range(1,maxPageNo+1)):
 print("============================================")
 print(f"Search finished, searched {maxPageNo} pages and found {len(results)} result(s)")
 
-for result in results:
+# for result in results:
+#     # print(f"${str(result.get('price'))}     {result.get('title')}")
+#     # print(hyperlink(result.get('link'), 'Click here!~'))
+#     print(hyperlink(result.get('link'), f"HK${str(result.get('price'))}   {result.get('title')}"))
+
+sortedList = sorted(results, key = lambda i: i['price'], reverse=True)
+for result in sortedList:
     # print(f"${str(result.get('price'))}     {result.get('title')}")
     # print(hyperlink(result.get('link'), 'Click here!~'))
     print(hyperlink(result.get('link'), f"HK${str(result.get('price'))}   {result.get('title')}"))
-
