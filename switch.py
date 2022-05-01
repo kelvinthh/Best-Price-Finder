@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 import requests
 
 def findSwitch(pageNo):
@@ -27,6 +28,6 @@ def findSwitch(pageNo):
     except Exception as e: 
         pass
 
-for i in range(1,334):
+for i in tqdm(range(1,334)):
     findSwitch(i)
 print("Search finished!!!")
