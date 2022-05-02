@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 import requests, datetime, os
 
-searchItem = input("Please enter what to search here >>> ")
-priceFilter = input("Please enter price no. it should be greater than  >>> ")
+searchItem = input("Please enter the product name to search >>> ")
+priceFilter = input("Please enter the minimum price for filtering (HKD) >>> ")
 url = f"https://www.price.com.hk/search.php?g=E&header_type=E&q={searchItem}&page=1"
 result = requests.get(url)
 soup = BeautifulSoup(result.text, "html.parser")
