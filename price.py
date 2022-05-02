@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-import requests
-import pprint
+import requests, datetime, os
 
 searchItem = input("Please enter what to search here >>> ")
 priceFilter = input("Please enter price no. it should be greater than  >>> ")
@@ -76,4 +75,16 @@ for result in sortedList:
     # print(hyperlink(result.get('link'), 'Click here!~'))
     print(hyperlink(result.get('link'), f"HK${str(result.get('price'))}   {result.get('title')}"))
 
-print(f"✅  Search finished, searched {maxPageNo} pages and found {len(results)} result(s)")
+    today = datetime.datetime.now()
+    date_time = today.strftime("%d-%m-%Y %H-%M-%S")
+
+    directory = "results"
+    path = f"./{directory}/Result {date_time}.txt"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    with open(path, 'a') as f:
+        f.write(f"\nHK${str(result.get('price'))} {result.get('title')} {result.get('link')}")
+
+print("====================================================================")
+print(f"✅  Search finished, searched {maxPageNo} page(s) and found {len(results)} result(s)")
+print(f"🗂  Search result saved to {path}")
