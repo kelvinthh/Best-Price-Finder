@@ -1,6 +1,13 @@
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-import requests, datetime, os
+from IPython.display import display
+import pandas as pd
+import requests
+import datetime, os
+
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 9000)
 
 searchItem = input("Please enter the product name to search >>> ")
 priceFilter = input("Please enter the minimum price for filtering (HKD) >>> ")
@@ -56,7 +63,7 @@ for i in tqdm(range(1,maxPageNo+1)):
                 # print(f"Price: ${spanTag.string}")
                 # print(f"Detail: {link}")
                 # print("--------------------------------")
-                results.append({'title': title, 'price': price, 'link': link})
+                results.append({'price': price, 'title': title, 'link': link})
 
         
     except Exception as e: 
@@ -88,3 +95,6 @@ for result in sortedList:
 print("====================================================================")
 print(f"✅  Search finished, searched {maxPageNo} page(s) and found {len(results)} result(s)")
 print(f"🗂  Search result saved to {path}")
+df = pd.DataFrame(sortedList)
+# print(df)
+display(df)
