@@ -1,4 +1,4 @@
-# web-scraping
+# Bese Price Finder
  
 Basically just me messing with web scraping using BeautifulSoup
 ### price.py
