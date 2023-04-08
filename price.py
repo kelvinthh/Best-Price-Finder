@@ -1,87 +1,73 @@
 import threading
 from time import sleep
-from tokenize import String
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from IPython.display import display
-import pandas as pd
-import requests, datetime, os
-
-pd.set_option('display.max_rows', 500)
-pd.set_option('display.max_columns', 500)
-pd.set_option('display.width', 9000)
+import requests
+import datetime
+import os
+import re
 
 results = []
-searchItem = input("Please enter the product name to search >>> ")
-priceFilter = input("Please enter the minimum price for filtering (HKD) >>> ")
+search_item = input("Please enter the product name to search >>> ")
+price_filter = input("Please enter the minimum price for filtering (HKD) >>> ")
 
 # Get search result max page number
-def getMaxPage(item: String) -> int:
+def get_max_page(item):
     url = f"https://www.price.com.hk/search.php?g=E&header_type=E&q={item}&page=1"
     result = requests.get(url)
     soup = BeautifulSoup(result.text, "html.parser")
-    return int(soup.find(class_="pagination-total").span.string.replace("共 ","").replace(" 頁", ""))
+    pagination_total = soup.find(class_="pagination-total").span.string.strip()
+    max_page = int(re.findall(r'\d+', pagination_total)[0])
+    return max_page
 
 # Turns links displayed in terminal clickable
 def hyperlink(uri, label=None):
     if label is None: 
         label = uri
-    parameters = ''
     # OSC 8 ; params ; URI ST <name> OSC 8 ;; ST 
     escape_mask = '\033]8;{};{}\033\\{}\033]8;;\033\\'
-    return escape_mask.format(parameters, uri, label)
+    return escape_mask.format('', uri, label)
 
 # Search for items within a single page
-def search(itemName: String, page: int):
-    url = f"https://www.price.com.hk/search.php?g=E&header_type=E&q={itemName}&page=" + str(page)
+def search(item_name, page):
+    url = f"https://www.price.com.hk/search.php?g=E&header_type=E&q={item_name}&page={page}"
     result = requests.get(url)
     soup = BeautifulSoup(result.text, "html.parser")
     items = soup.find_all("div", {"class": "ec-list-product-wrapper"})
 
-    try:
-        for item in items:
-            priceDiv = item.find("div", {"class": "ec-product-price"})
-            remarkLabel = priceDiv.find("span", {"class": "remark-label"})
-            if remarkLabel and "已售罄" in remarkLabel:
-                continue
+    for item in items:
+        price_div = item.find("div", {"class": "ec-product-price"})
+        remark_label = price_div.find("span", {"class": "remark-label"})
+        if remark_label and "已售罄" in remark_label:
+            continue
 
-            priceSpan = priceDiv.find("span", {"class": "text-price-number"})
-        
-            title = item.img["title"]
-            price = 0
-            a_href = item.find("a")["href"]
+        price_span = price_div.find("span", {"class": "text-price-number"})
+        title = item.img["title"]
+        link = item.find("a")["href"]
 
+        if "shop.price.com" not in link:
+            link = "https://price.com.hk/" + link
 
-            if "shop.price.com" in a_href:
-                link = a_href
-            else:
-                link = "https://price.com.hk/"+item.find("a")["href"]
+        price = int(price_span.string.replace(",", ""))
 
-            price = int(priceSpan.string.replace(",", ""))
+        if item_name in title and price > int(price_filter):
+            results.append({'price': price, 'title': title, 'link': link})        
 
-
-            if itemName in title and price > int(priceFilter):
-                results.append({'price': price, 'title': title, 'link': link})        
-    except Exception as e: 
-        pass
-
-maxPage = getMaxPage(searchItem)
+max_page = get_max_page(search_item)
 threads = []
-for i in tqdm(range(1,maxPage+1)):
-    t = threading.Thread(target=search, args=(searchItem,i,))
+for i in tqdm(range(1, max_page + 1), "Initizialing"):
+    t = threading.Thread(target=search, args=(search_item, i,))
     threads.append(t)
     t.start()
     sleep(0.05)
 
-
-for x in threads:
+for x in tqdm(threads, f"Search Completion"):
     x.join()
 
 print("============================================")
 
-sortedList = sorted(results, key = lambda i: i['price'], reverse=True)
-for result in sortedList:
-
+sorted_list = sorted(results, key=lambda i: i['price'], reverse=True)
+for result in sorted_list:
     print(hyperlink(result.get('link'), f"HK${str(result.get('price'))}   {result.get('title')}"))
 
     today = datetime.datetime.now()
@@ -95,9 +81,5 @@ for result in sortedList:
         f.write(f"\nHK${str(result.get('price'))} {result.get('title')} {result.get('link')}")
 
 print("====================================================================")
-print(f"✅  Search finished, searched {maxPage} page(s) and found {len(results)} result(s)")
+print(f"✅  Search finished, searched {max_page} page(s) and found {len(results)} result(s)")
 print(f"🗂  Search result saved to {path}")
-# df = pd.DataFrame(sortedList)
-# display(df)
-# with open("df.txt", 'a') as f:
-#         f.write(df.to_string())
