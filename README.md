@@ -1,4 +1,4 @@
-# Bese Price Finder
+# Best Price Finder
  
 Basically just me messing with web scraping using BeautifulSoup
 ### price.py
@@ -7,3 +7,14 @@ Finding the best deal on the web online section(網購) of Price.com.hk of your 
 ![](https://i.imgur.com/kRAbyCp.gif)
 The result is sorted by the price, and also saved to a separate .txt file.
 ![](https://i.imgur.com/m4VT6PV.png)
+## Installation
+1. Clone the repository to your local machine:
+`git clone https://github.com/[YOUR-USERNAME]/best-price-finder.git`
+2. Navigate to the project directory:
+`cd best-price-finder`
+3. Install the required dependencies using `pip` and the `requirements.txt` file:
+`pip install -r requirements.txt`
+4. Run the `price.py` script and follow the prompts:
+`python price.py`
+
+Note: If you encounter any issues with installing the dependencies, make sure you have `pip` installed and that it is up-to-date by running `pip install --upgrade pip`.
