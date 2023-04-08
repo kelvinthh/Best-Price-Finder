@@ -7,9 +7,7 @@ Finding the best deal on the web online section(網購) of Price.com.hk of your 
 ![](https://i.imgur.com/kRAbyCp.gif)
 The result is sorted by the price, and also saved to a separate .txt file.
 ![](https://i.imgur.com/m4VT6PV.png)
-
 ## Installation
-
 1. Clone the repository to your local machine:
 `git clone https://github.com/[YOUR-USERNAME]/best-price-finder.git`
 2. Navigate to the project directory:
